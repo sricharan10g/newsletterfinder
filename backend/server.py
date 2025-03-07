@@ -1,8 +1,10 @@
+import os
+import json
 from fastapi import FastAPI
 from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer, util
 from fastapi.middleware.cors import CORSMiddleware
-import json
+import uvicorn
 
 # Initialize FastAPI
 app = FastAPI()
@@ -15,13 +17,18 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
-
 # Load AI Model
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
-# Load newsletters from JSON file
-with open("../public/newsletters.json", "r") as f:
-    newsletters = json.load(f)
+# Correct JSON file path handling
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Get current directory
+NEWSLETTERS_PATH = os.path.join(BASE_DIR, "..", "public", "newsletters.json")
+
+try:
+    with open(NEWSLETTERS_PATH, "r") as f:
+        newsletters = json.load(f)
+except FileNotFoundError:
+    newsletters = []  # Handle missing file gracefully
 
 # Data model for user input
 class QueryInput(BaseModel):
@@ -46,3 +53,7 @@ def recommend_newsletters(input_data: QueryInput):
     
     return {"recommendations": result[:3]}  # Return top 3 matches
 
+# Start server with correct port
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))  # Render provides PORT dynamically
+    uvicorn.run(app, host="0.0.0.0", port=port)
