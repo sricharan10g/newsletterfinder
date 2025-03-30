@@ -1,35 +1,11 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState } from "react";
 
 export default function Home() {
   const [query, setQuery] = useState("");
-  const [newsletters, setNewsletters] = useState([]);
-  const [filteredNewsletters, setFilteredNewsletters] = useState([]); // ✅ FIXED
+  const [filteredNewsletters, setFilteredNewsletters] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Load the newsletter data from JSON
-  useEffect(() => {
-    const fetchNewsletters = async () => {
-      try {
-        const response = await fetch("/newsletters.json");
-
-        // Check if response is valid
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setNewsletters(data);
-      } catch (err) {
-        console.error("Error loading newsletters:", err);
-      }
-    };
-
-    fetchNewsletters();
-  }, []);
-
-  // Function to get AI recommendations
   const fetchRecommendations = async () => {
     if (!query.trim()) {
       setError("Please enter a search query.");
@@ -41,7 +17,6 @@ export default function Home() {
 
     try {
       const response = await fetch("https://newsletterfinder.onrender.com/recommend", {
-
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,10 +29,17 @@ export default function Home() {
       }
 
       const data = await response.json();
-      setFilteredNewsletters(data.recommendations); // ✅ FIXED
+      console.log("✅ API response:", data);
 
+      if (data?.recommendations?.length > 0) {
+        setFilteredNewsletters(data.recommendations);
+      } else {
+        setFilteredNewsletters([]);
+        setError("No newsletters found.");
+      }
     } catch (error) {
-      setError(error.message);
+      console.error("❌ API Error:", error);
+      setError(error.message || "Something went wrong.");
     } finally {
       setLoading(false);
     }
@@ -65,37 +47,89 @@ export default function Home() {
 
   return (
     <div
-      className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat p-6"
       style={{
         backgroundImage: "url('/ghibli-bg.jpg')",
+        backgroundSize: "cover",
         backgroundAttachment: "fixed",
+        backgroundPosition: "center",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "2rem",
+        fontFamily: "'Quicksand', sans-serif",
       }}
     >
-
-      <h1 className="text-4xl font-bold text-gray-800 mb-6">
+      <h1 style={{ fontSize: "2.8rem", fontWeight: "700", color: "#1f2937", marginBottom: "1.5rem" }}>
         AI Newsletter Finder
       </h1>
 
-      {/* Search Bar */}
       <input
         type="text"
         placeholder="Find the best newsletters..."
-        className="p-3 border border-gray-400 rounded-lg w-96 text-gray-800 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        style={{
+          padding: "12px",
+          fontSize: "1rem",
+          width: "320px",
+          borderRadius: "10px",
+          border: "1px solid #ccc",
+          marginBottom: "12px",
+          outline: "none",
+        }}
       />
 
-      {/* Search Button */}
       <button
         onClick={fetchRecommendations}
-        className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
         disabled={loading}
+        style={{
+          padding: "10px 24px",
+          backgroundColor: "#4f9a94",
+          color: "white",
+          fontWeight: "bold",
+          fontSize: "1rem",
+          border: "none",
+          borderRadius: "10px",
+          cursor: "pointer",
+          marginBottom: "1rem",
+        }}
       >
         {loading ? "Searching..." : "Find Newsletters"}
       </button>
 
-      
+      {error && (
+        <p style={{ color: "red", marginBottom: "1rem", fontWeight: "500" }}>
+          {error}
+        </p>
+      )}
 
+      {filteredNewsletters.length > 0 &&
+        filteredNewsletters.map((n, index) => (
+          <div
+            key={index}
+            style={{
+              background: "rgba(255, 255, 255, 0.3)",
+              backdropFilter: "blur(10px)",
+              WebkitBackdropFilter: "blur(10px)",
+              padding: "18px",
+              borderRadius: "16px",
+              marginTop: "16px",
+              width: "340px",
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+              color: "#1f2937",
+              transition: "transform 0.3s ease",
+              cursor: "default",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.02)")}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+          >
+            <h2 style={{ fontWeight: "700", fontSize: "1.1rem", marginBottom: "6px" }}>{n.title}</h2>
+            <p style={{ fontSize: "0.9rem", opacity: 0.9 }}>{n.description}</p>
+          </div>
+
+        ))}
     </div>
   );
 }
