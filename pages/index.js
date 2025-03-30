@@ -40,7 +40,8 @@ export default function Home() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/recommend", {
+      const response = await fetch("https://newsletterfinder.onrender.com/recommend", {
+
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +64,14 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-6">
+    <div
+      className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat p-6"
+      style={{
+        backgroundImage: "url('/ghibli-bg.jpg')",
+        backgroundAttachment: "fixed",
+      }}
+    >
+
       <h1 className="text-4xl font-bold text-gray-800 mb-6">
         AI Newsletter Finder
       </h1>
@@ -86,17 +94,8 @@ export default function Home() {
         {loading ? "Searching..." : "Find Newsletters"}
       </button>
 
-      {/* Display AI Results */}
-      <div className="mt-6 w-96">
-        {error && <p className="text-red-600">{error}</p>}
-        {filteredNewsletters.length > 0 &&
-          filteredNewsletters.map((n, index) => (
-            <div key={index} className="bg-white p-4 rounded-lg shadow-lg mb-4">
-              <h2 className="font-semibold text-lg text-gray-900">{n.title}</h2>
-              <p className="text-sm text-gray-600">{n.description}</p>
-            </div>
-          ))}
-      </div>
+      
+
     </div>
   );
 }

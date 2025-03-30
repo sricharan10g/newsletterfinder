@@ -1,0 +1,68 @@
+body {
+    margin: 0;
+    font-family: 'Quicksand', sans-serif;
+    background-image: url('/ghibli-bg.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: #2f2f2f;
+  }
+  
+  .container {
+    max-width: 500px;
+    margin: 80px auto;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+  }
+  
+  input {
+    padding: 12px;
+    font-size: 1rem;
+    width: 320px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 12px;
+    outline: none;
+  }
+  
+  button {
+    padding: 10px 20px;
+    background-color: #57a2a3;
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #3e8687;
+  }
+  
+  .newsletter {
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 16px;
+    border-radius: 12px;
+    margin-top: 16px;
+    width: 320px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .error {
+    color: red;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  
